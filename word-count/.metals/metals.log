@@ -1,0 +1,5 @@
+[0m2021.03.08 12:31:27 INFO  Started: Metals version 0.10.0 in workspace '/Users/joel/Exercism/elixir/word-count' for client vscode 1.54.1.[0m
+[0m2021.03.08 12:31:29 INFO  time: initialize in 2.17s[0m
+[0m2021.03.08 12:31:32 WARN  Build server is not auto-connectable.[0m
+[0m2021.03.08 12:31:32 WARN  no build tool detected in workspace '/Users/joel/Exercism/elixir/word-count'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.03.08 16:53:30 INFO  shutting down Metals[0m
