@@ -31,6 +31,10 @@ defmodule RobotSimulator do
     direction in [:north, :south, :east, :west]
   end
 
+  def simulate(robot, "") do
+    robot
+  end
+
   @doc """
   Simulate the robot's movement given a string of instructions.
 
@@ -38,26 +42,64 @@ defmodule RobotSimulator do
   """
   @spec simulate(robot :: any, instructions :: String.t()) :: any
   def simulate(robot, instructions) do
-    # Enum.each() -> Loop over all characters in the
-    # case instructions do
-    #   "R" <> _ -> change_direction(robot.direction) and update_position(robot.position)
-    #   "L" <> _ -> change_direction(robot.direction) and update_position(robot.position)
-    #   "A" <> rest -> change_direction(robot.direction) and update_position(robot.position)
-    # end
+    case instructions do
+      "R" <> rest -> right_action(robot, rest)
+      "L" <> rest -> left_action(robot, rest)
+      "A" <> rest -> advance_action(robot, rest)
+      _ -> {:error, "invalid instruction"}
+    end
+  end
+
+  defp right_action(robot, rest) do
+    robot = %{robot | direction: change_direction_from_right(robot)}
+    simulate(robot, rest)
+  end
+
+  defp left_action(robot, rest) do
+    robot = %{robot | direction: change_direction_from_left(robot)}
+    simulate(robot, rest)
+  end
+
+  defp advance_action(robot, rest) do
+    robot = update_position(robot)
+    simulate(robot, rest)
   end
 
   @doc """
   Update the robot's direction
   """
-  @spec change_direction(direction :: atom)
-  def change_direction do
+  @spec change_direction_from_left(direction :: map()) :: map()
+  def change_direction_from_left(robot) do
+    cond do
+      robot.direction == :north -> :west
+      robot.direction == :east -> :north
+      robot.direction == :south -> :east
+      robot.direction == :west -> :south
+    end
+  end
+
+  def change_direction_from_right(robot) do
+    cond do
+      robot.direction == :north -> :east
+      robot.direction == :east -> :south
+      robot.direction == :south -> :west
+      robot.direction == :west -> :north
+    end
   end
 
   @doc """
   Update the robot's position
   """
-  @spec update_position(position :: map())
-  def update_position do
+  @spec update_position(robot :: map()) :: map()
+  def update_position(robot) do
+    pos = robot.position
+
+    case robot.direction do
+      :north -> %{robot | position: {elem(pos, 0), elem(pos, 1) + 1}}
+      :south -> %{robot | position: {elem(pos, 0), elem(pos, 1) - 1}}
+      :east -> %{robot | position: {elem(pos, 0) + 1, elem(pos, 1)}}
+      :west -> %{robot | position: {elem(pos, 0) - 1, elem(pos, 1)}}
+    end
   end
 
   @doc """
