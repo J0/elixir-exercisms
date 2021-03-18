@@ -13,17 +13,17 @@ defmodule Markdown do
   @spec parse(String.t()) :: String.t()
   def parse(markdown) do
     String.split(markdown, "\n")
-    |> Enum.map(fn line -> process(line) end)
-    |> Enum.join()
+    |> Enum.map_join(&process/1)
     |> wrap_list()
   end
 
+  defp process(line = "#" <> _), do: parse_header_md_level(line)
+  defp process(line = "*" <> _), do: parse_list_md_level(line)
+
   defp process(line) do
-    cond do
-      String.starts_with?(line, "#") -> parse_header_md_level(line)
-      String.starts_with?(line, "*") -> parse_list_md_level(line)
-      true -> String.split(line) |> join_words_with_tags() |> enclose("p")
-    end
+    String.split(line)
+    |> join_words_with_tags()
+    |> enclose("p")
   end
 
   defp enclose(str, tag), do: "<#{tag}>#{str}</#{tag}>"
@@ -41,11 +41,15 @@ defmodule Markdown do
   end
 
   defp join_words_with_tags(words) do
-    words |> Enum.map(&replace_md_with_tag(&1)) |> Enum.join(" ")
+    words
+    |> Enum.map(&replace_md_with_tag(&1))
+    |> Enum.join(" ")
   end
 
   defp replace_md_with_tag(md) do
-    md |> replace_prefix_md() |> replace_suffix_md()
+    md
+    |> replace_prefix_md()
+    |> replace_suffix_md()
   end
 
   defp replace_prefix_md(w) do
